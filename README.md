@@ -1,0 +1,2 @@
+# ducks-fractal
+The "ducks" fractal- view the demo [here](https://radian628.github.io/ducks-fractal/index.html). If you want an explanation of how this works (not by me), [click here](http://algorithmic-worlds.net/blog/blog.php?Post=20110227).
