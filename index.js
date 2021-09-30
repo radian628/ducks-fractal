@@ -34,7 +34,7 @@ document.addEventListener("mousemove", e => {
 
 async function main() {
   const VERTEX_SHADER = await loadAsset("./shaders/vertex.vert");
-  const FRAGMENT_SHADER = await loadAsset("./shaders/raymarcher.frag");
+  const FRAGMENT_SHADER = await loadAsset("./shaders/fragment.frag");
   
   let c = document.getElementById("canvas");
   let gl = c.getContext("webgl2");
@@ -75,28 +75,6 @@ async function main() {
   );
 
 let t = 0;
-
-  let tex = gl.createTexture();
-  gl.bindTexture(gl.TEXTURE_2D, tex);
-const pixel = new Uint8Array([0, 0, 255, 255]);  // opaque blue
-gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA,
-              1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
-              pixel);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRRORED_REPEAT);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  let img = new Image();
-  document.body.appendChild(img);
-  img.onload = () => {
-    console.log("img loaded");
-      let c2 = document.createElement("canvas");
-      c2.width = 256; c2.height = 256;
-      c2.getContext("2d").drawImage(img, 0, 0, 256, 256);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 256, 256, 0, gl.RGBA, gl.UNSIGNED_BYTE, c2);
-  };
-  img.crossOrigin = "anonymous";
-  img.src = "https://hips.hearstapps.com/hmg-prod.s3.amazonaws.com/images/how-to-keep-ducks-call-ducks-1615457181.jpg?resize=640:*";
-  
   loop = () => {
     t++;
     //let p = [Math.cos(t / 100) * 0.13 + 0.5, Math.sin(t / 100) * 0.13 - 0.5]

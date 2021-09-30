@@ -28,12 +28,8 @@ float asymptoteAt1(float x) {
 void main() {
   vec2 z = texCoord * 3.0 - 1.5;
   z.y *= aspect;
-  //vec2 pOffset = texture2D(tex, 1.0 - texCoord).rg * 0.02;
-//vec2 p = vec2(0.5, -0.5);
-//float iter = 0.0;
 for (int i = 0; i < 64; i++) {
   z = iteration(z, p);
-  //if (length(z) < 0.5) iter = float(i);
 }
 vec3 col = vec3(atan(z.y, z.x) / 6.28318531 + 0.5, 1.0, asymptoteAt1(length(z)));
   fragColor = vec4(hsv2rgb(col), 1.0);
