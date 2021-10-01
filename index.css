@@ -5,3 +5,9 @@
   top: 0px;
   left: 0px;
 }
+
+#screenshot-button {
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+}

@@ -30,6 +30,12 @@ async function main() {
   let c = document.getElementById("canvas");
   let gl = c.getContext("webgl2");
 
+  let screenshotButton = document.getElementById("screenshot-button");
+  let screenshotNextFrame = false;
+  screenshotButton.addEventListener("click", e => {
+    screenshotNextFrame = true;
+  });
+
   let corner1 = [-1, -1];
   let corner2 = [3, 3];
 
@@ -138,12 +144,29 @@ let t = 0;
     // ];
     setUniform(gl, shaderProgram, "p", "2fv",p );
     setUniform(gl, shaderProgram, "aspect", "1f", c.height / c.width);
+    setUniform(gl, shaderProgram, "sampleSideLength", "1f", screenshotNextFrame ? 8 : 1);
 
     
     setUniform(gl, shaderProgram, "corner1", "2fv", /*p*/corner1);
     setUniform(gl, shaderProgram, "corner2", "2fv", /*p*/corner2);
+
+    setUniform(gl, shaderProgram, "winSize", "2fv", /*p*/[c.width, c.height]);
     
     gl.drawArrays(gl.TRIANGLES, 0, 6);
+    
+    if (screenshotNextFrame) {  
+      c.toBlob(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.style.display = "none";
+        link.download = "ducks-fractal.png";
+        document.body.appendChild(link);
+        link.href = url;
+        link.click();
+        window.URL.revokeObjectURL(url);
+      });
+      screenshotNextFrame = false;
+    }
     requestAnimationFrame(loop);
   }
   loop();
