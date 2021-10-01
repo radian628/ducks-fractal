@@ -22,15 +22,6 @@ function makeAssetLoader() {
 let loadAsset = makeAssetLoader();
 
 
-let mousePos = { x: 0, y: 0 };
-let smoothMousePos = { x: 0, y: 0 };
-document.addEventListener("mousemove", e => {
-	mousePos = {
-		x: e.clientX,
-		y: e.clientY
-	};
-});
-
 
 async function main() {
   const VERTEX_SHADER = await loadAsset("./shaders/vertex.vert");
@@ -39,9 +30,58 @@ async function main() {
   let c = document.getElementById("canvas");
   let gl = c.getContext("webgl2");
 
+  let corner1 = [-1, -1];
+  let corner2 = [3, 3];
+
+  let p = [0.734, -0.433];
+
+  let mousePos = { x: 0, y: 0 };
+  let smoothMousePos = { x: 0, y: 0 };
+  let mouseButtons = {};
+  document.addEventListener("mousemove", e => {
+    mousePos = {
+      x: e.clientX,
+      y: e.clientY
+    };
+    if (mouseButtons[0]) {
+      let offsetX = -e.movementX / c.width * Math.abs(corner2[0] - corner1[0]);
+      let offsetY = e.movementY / c.height * Math.abs(corner2[1] - corner1[1]);
+      corner1[0] += offsetX;
+      corner2[0] += offsetX;
+      corner1[1] += offsetY;
+      corner2[1] += offsetY;
+    }
+  });
+  document.addEventListener("mousedown", e => {
+    mouseButtons[e.button] = true;
+  });
+  document.addEventListener("mouseup", e => {
+    mouseButtons[e.button] = false;
+  });
+  document.addEventListener("wheel", e => {
+    let center = [(corner1[0] + corner2[0]) / 2, (corner1[1] + corner2[1]) / 2];
+    if (e.deltaY < 0) {
+      corner1[0] = center[0] + (corner1[0] - center[0]) * 0.9;
+      corner1[1] = center[1] + (corner1[1] - center[1]) * 0.9;
+      corner2[0] = center[0] + (corner2[0] - center[0]) * 0.9;
+      corner2[1] = center[1] + (corner2[1] - center[1]) * 0.9;
+    } else if (e.deltaY > 0) {
+      corner1[0] = center[0] + (corner1[0] - center[0]) / 0.9;
+      corner1[1] = center[1] + (corner1[1] - center[1]) / 0.9;
+      corner2[0] = center[0] + (corner2[0] - center[0]) / 0.9;
+      corner2[1] = center[1] + (corner2[1] - center[1]) / 0.9;
+    }
+  });
+  
   window.addEventListener("resize", e => {
     c.width = window.innerWidth;
     c.height = window.innerHeight;
+    let aspect = window.innerHeight / window.innerWidth;
+    let center = [(corner1[0] + corner2[0]) / 2, (corner1[1] + corner2[1]) / 2];
+    let halfSpan = [(corner2[0] - corner1[0]) / 2, (corner2[1] - corner1[1]) / 2];
+    corner1 = [center[0] - halfSpan[0], center[1] - halfSpan[0] * aspect];
+    corner2 = [center[0] + halfSpan[0], center[1] + halfSpan[0] * aspect];
+
     gl.viewport(0, 0, c.width, c.height);
   });
   window.dispatchEvent(new Event("resize"));
@@ -77,17 +117,31 @@ async function main() {
 let t = 0;
   loop = () => {
     t++;
+    if (mouseButtons[2]) {
+      // p = [
+      //   p[0] + Math.exp((Math.abs(mousePos.x / c.width - 0.5) * 6)) * 0.001,
+      //   p[1] + Math.exp((Math.abs(mousePos.y / c.height - 0.5) * 6)) * 0.001
+      // ];
+      p = [
+        mousePos.x / c.width,
+        -mousePos.y / c.height
+      ];
+    }
     //let p = [Math.cos(t / 100) * 0.13 + 0.5, Math.sin(t / 100) * 0.13 - 0.5]
-        smoothMousePos = {
-          x: smoothMousePos.x + (mousePos.x - smoothMousePos.x) * 0.06,
-          y: smoothMousePos.y + (mousePos.y - smoothMousePos.y) * 0.06,
-        };
-    let p = [
-      smoothMousePos.x / c.width * 1.0 + -0.0,
-      -smoothMousePos.y / c.height * 1.0 + -0.0
-    ];
-    setUniform(gl, shaderProgram, "p", "2fv", p);
+    //     smoothMousePos = {
+    //       x: smoothMousePos.x + (mousePos.x - smoothMousePos.x) * 0.06,
+    //       y: smoothMousePos.y + (mousePos.y - smoothMousePos.y) * 0.06,
+    //     };
+    // let p = [
+    //   smoothMousePos.x / c.width * 1.0 + -0.0,
+    //   -smoothMousePos.y / c.height * 1.0 + -0.0
+    // ];
+    setUniform(gl, shaderProgram, "p", "2fv",p );
     setUniform(gl, shaderProgram, "aspect", "1f", c.height / c.width);
+
+    
+    setUniform(gl, shaderProgram, "corner1", "2fv", /*p*/corner1);
+    setUniform(gl, shaderProgram, "corner2", "2fv", /*p*/corner2);
     
     gl.drawArrays(gl.TRIANGLES, 0, 6);
     requestAnimationFrame(loop);

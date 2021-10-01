@@ -21,13 +21,15 @@ uniform vec2 p;
 
 uniform float aspect;
 
+uniform vec2 corner1;
+uniform vec2 corner2;
+
 float asymptoteAt1(float x) {
   return -1.0 / (1.0 + x) + 1.0;
 }
 
 void main() {
-  vec2 z = texCoord * 3.0 - 1.5;
-  z.y *= aspect;
+  vec2 z = texCoord * (corner2 - corner1) + corner1;
 for (int i = 0; i < 64; i++) {
   z = iteration(z, p);
 }
