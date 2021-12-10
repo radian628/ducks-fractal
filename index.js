@@ -24,6 +24,7 @@ let loadAsset = makeAssetLoader();
 
 
 async function main() {
+  
   const VERTEX_SHADER = await loadAsset("./shaders/vertex.vert");
   const FRAGMENT_SHADER = await loadAsset("./shaders/fragment.frag");
   
@@ -37,7 +38,7 @@ async function main() {
   });
 
   let corner1 = [-1, -1];
-  let corner2 = [3, 3];
+  let corner2 = [1, 1];
 
   let p = [0.734, -0.433];
 
@@ -145,6 +146,7 @@ let t = 0;
     setUniform(gl, shaderProgram, "p", "2fv",p );
     setUniform(gl, shaderProgram, "aspect", "1f", c.height / c.width);
     setUniform(gl, shaderProgram, "sampleSideLength", "1f", screenshotNextFrame ? 8 : 1);
+    setUniform(gl, shaderProgram, "brightness", "1f", 5);
 
     
     setUniform(gl, shaderProgram, "corner1", "2fv", /*p*/corner1);

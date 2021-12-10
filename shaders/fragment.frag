@@ -28,6 +28,8 @@ uniform vec2 winSize;
 
 uniform float sampleSideLength;
 
+uniform float brightness;
+
 float asymptoteAt1(float x) {
   return -1.0 / (1.0 + x) + 1.0;
 }
@@ -36,7 +38,7 @@ vec3 doFractalQuery(vec2 z) {
   for (int i = 0; i < 256; i++) {
     z = iteration(z, p);
   }
-  vec3 col = vec3(atan(z.y, z.x) / 6.28318531 + 0.5, 1.0, asymptoteAt1(length(z)));
+  vec3 col = vec3(atan(z.y, z.x) / 6.28318531 + 0.5, 1.0, asymptoteAt1(length(z) * brightness));
   return hsv2rgb(col);
 }
 
@@ -48,12 +50,14 @@ void main() {
     vec2 startD = -d * (sampleSideLength - 1.0);
     vec2 endD = d * (sampleSideLength - 1.0);
     vec2 index;
+    float count = 0.0;
     for (index.y = startD.y; index.y <= endD.y; index.y += d.y * 2.0) {
       for (index.x = startD.x; index.x <= endD.x; index.x += d.x * 2.0) {
         col += doFractalQuery(z + index);
+        count++;
       }
     }
-    col /= float(sampleSideLength * sampleSideLength);
+    col /= count;
   } else {
     col = doFractalQuery(z);
   }
