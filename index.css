@@ -11,3 +11,13 @@
   bottom: 3px;
   right: 3px;
 }
+
+#settings {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 3px;
+  background-color: #00000088;
+  z-index: 10;
+  color: white;
+}

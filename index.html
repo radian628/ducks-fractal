@@ -1,10 +1,20 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" type="text/css" href="index.css">
+    <link rel="stylesheet" type="text/css" href="index.css" />
   </head>
   <body>
-    <canvas id="canvas" width="1920" height="1080" oncontextmenu="return false;"></canvas>
+    <div id="settings">
+      Iterations <input value="64" type="number" id="iterations" />
+      <br />
+      Image <input type="file" id="image" />
+    </div>
+    <canvas
+      id="canvas"
+      width="1920"
+      height="1080"
+      oncontextmenu="return false;"
+    ></canvas>
     <button id="screenshot-button">Take Screenshot</button>
     <script src="gl-helper.js"></script>
     <script src="index.js"></script>
